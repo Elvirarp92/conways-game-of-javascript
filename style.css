@@ -1,0 +1,11 @@
+#game-board {
+  display: block;
+  margin: 0px auto;
+  border: 1px solid black;
+}
+
+small {
+  text-align: center;
+  display: block;
+  margin: 5px auto;
+}
