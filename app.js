@@ -9,12 +9,6 @@ const app = {
 
   tileSize: 10,
 
-  appSize: {
-    // size, in pixels, of the canvas
-    height: undefined,
-    width: undefined,
-  },
-
   gridSize: {
     // number of tiles in every axis
     rows: 60,
@@ -22,6 +16,13 @@ const app = {
   },
 
   fps: 1, //sic
+
+  appSize: {
+    // size, in pixels, of the canvas
+    height: undefined,
+    width: undefined,
+  },
+
   framesCounter: 0,
 
   init() {
