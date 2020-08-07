@@ -53,27 +53,27 @@ const app = {
     }
   },
 
-    drawGrid() {
-      x = this.tileSize
-      y = this.tileSize
-      this.ctx.lineWidth = 0.2
-      this.ctx.globalAlpha = 1
-      while (x < this.appSize.width) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(x, 0)
-        this.ctx.lineTo(x, this.appSize.height)
-        this.ctx.stroke()
-        this.ctx.closePath()
-        x = x + this.tileSize
-      }
+  drawGrid() {
+    x = this.tileSize
+    y = this.tileSize
+    this.ctx.lineWidth = 0.2
+    this.ctx.globalAlpha = 1
+    while (x < this.appSize.width) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(x, 0)
+      this.ctx.lineTo(x, this.appSize.height)
+      this.ctx.stroke()
+      this.ctx.closePath()
+      x = x + this.tileSize
+    }
 
-      while (y < this.appSize.height) {
-        this.ctx.beginPath()
-        this.ctx.moveTo(0, y)
-        this.ctx.lineTo(this.appSize.width, y)
-        this.ctx.stroke()
-        this.ctx.closePath()
-        y = y + this.tileSize
-      }
-    },
+    while (y < this.appSize.height) {
+      this.ctx.beginPath()
+      this.ctx.moveTo(0, y)
+      this.ctx.lineTo(this.appSize.width, y)
+      this.ctx.stroke()
+      this.ctx.closePath()
+      y = y + this.tileSize
+    }
+  },
 }
