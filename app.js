@@ -1,6 +1,3 @@
-let x
-let y
-
 const app = {
   name: "Conway's Game of Life",
   author: 'Elvira Ramírez Ponce',
@@ -34,6 +31,7 @@ const app = {
 
   start() {
     this.setDimensions()
+    this.drawCells()
     this.drawGrid()
   },
 
@@ -44,27 +42,38 @@ const app = {
     this.canvasDom.width = this.appSize.width
   },
 
-  drawGrid() {
-    x = this.tileSize
-    y = this.tileSize
-    this.ctx.lineWidth = 0.2
-    this.ctx.globalAlpha = 1
-    while (x < this.appSize.width) {
-      this.ctx.beginPath()
-      this.ctx.moveTo(x, 0)
-      this.ctx.lineTo(x, this.appSize.height)
-      this.ctx.stroke()
-      this.ctx.closePath()
-      x = x + this.tileSize
-    }
+  drawCells() {
+    this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
 
-    while (y < this.appSize.height) {
-      this.ctx.beginPath()
-      this.ctx.moveTo(0, y)
-      this.ctx.lineTo(this.appSize.width, y)
-      this.ctx.stroke()
-      this.ctx.closePath()
-      y = y + this.tileSize
+    for (y = 0; y < this.gridSize.rows; y++) {
+      for (x = 0; x < this.gridSize.columns; x++) {
+        this.ctx.fillStyle = 'purple'
+        this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize)
+      }
     }
   },
+
+    drawGrid() {
+      x = this.tileSize
+      y = this.tileSize
+      this.ctx.lineWidth = 0.2
+      this.ctx.globalAlpha = 1
+      while (x < this.appSize.width) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(x, 0)
+        this.ctx.lineTo(x, this.appSize.height)
+        this.ctx.stroke()
+        this.ctx.closePath()
+        x = x + this.tileSize
+      }
+
+      while (y < this.appSize.height) {
+        this.ctx.beginPath()
+        this.ctx.moveTo(0, y)
+        this.ctx.lineTo(this.appSize.width, y)
+        this.ctx.stroke()
+        this.ctx.closePath()
+        y = y + this.tileSize
+      }
+    },
 }
