@@ -35,10 +35,9 @@ const app = {
 
   start() {
     this.setDimensions()
+    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.columns).fill(0))
     this.drawCells()
     this.drawGrid()
-    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.columns).fill(0))
-    console.log(this.gameState)
   },
 
   setDimensions() {
@@ -50,10 +49,10 @@ const app = {
 
   drawCells() {
     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
-
-    for (y = 0; y < this.gridSize.rows; y++) {
-      for (x = 0; x < this.gridSize.columns; x++) {
-        this.ctx.fillStyle = 'purple'
+    for (let y = 0; y < this.gridSize.rows; y++) {
+      for (let x = 0; x < this.gridSize.columns; x++) {
+        console.log([x,y])
+        this.checkAliveness([x,y]) == 0 ? this.ctx.fillStyle = 'white' : this.ctx.fillStyle = 'black'
         this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize)
       }
     }
@@ -81,5 +80,12 @@ const app = {
       this.ctx.closePath()
       y = y + this.tileSize
     }
+  },
+
+
+  checkAliveness(coordinates){
+    /* Coordinates are an array like [x, y] where x denotes
+    the column and y denotes the row */
+    return this.gameState[coordinates[1]][coordinates[0]]
   },
 }
