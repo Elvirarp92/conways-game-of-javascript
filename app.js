@@ -23,6 +23,9 @@ const app = {
     width: undefined,
   },
 
+  gameState: undefined,
+  newGameState: undefined,
+
   framesCounter: 0,
 
   init() {
@@ -34,6 +37,8 @@ const app = {
     this.setDimensions()
     this.drawCells()
     this.drawGrid()
+    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.columns).fill(0))
+    console.log(this.gameState)
   },
 
   setDimensions() {
