@@ -49,11 +49,13 @@ const app = {
 
   drawCells() {
     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
-    for (let y = 0; y < this.gridSize.rows; y++) {
-      for (let x = 0; x < this.gridSize.columns; x++) {
-        console.log([x,y])
-        this.checkAliveness([x,y]) == 0 ? this.ctx.fillStyle = 'white' : this.ctx.fillStyle = 'black'
-        this.ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize)
+    for (let row = 0; row < this.gridSize.rows; row++) {
+      for (let col = 0; col < this.gridSize.columns; col++) {
+        console.log([row, col])
+        this.checkAliveness(row, col) == 0
+          ? (this.ctx.fillStyle = 'aquamarine')
+          : (this.ctx.fillStyle = 'black')
+        this.ctx.fillRect(col * this.tileSize, row * this.tileSize, this.tileSize, this.tileSize)
       }
     }
   },
@@ -82,10 +84,21 @@ const app = {
     }
   },
 
+  checkAliveness(row, col) {
+    return this.gameState[row][col]
+  },
 
-  checkAliveness(coordinates){
-    /* Coordinates are an array like [x, y] where x denotes
-    the column and y denotes the row */
-    return this.gameState[coordinates[1]][coordinates[0]]
+  checkNeighbors(row, col) {
+    /* Checks how many of the neighbor cells are alive */
+    return (
+      this.checkAliveness(row - 1, col - 1) +
+      this.checkAliveness(row - 1, col) +
+      this.checkAliveness(row - 1, col + 1) +
+      this.checkAliveness(row, col - 1) +
+      this.checkAliveness(row, col + 1) +
+      this.checkAliveness(row + 1, col - 1) +
+      this.checkAliveness(row + 1, col) +
+      this.checkAliveness(row + 1, col + 1)
+    )
   },
 }
