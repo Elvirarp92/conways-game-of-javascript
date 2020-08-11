@@ -36,7 +36,7 @@ const app = {
 
   start() {
     this.setDimensions()
-    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.cols).fill(0))
+    this.gameState = Array.from({length: this.gridSize.rows}, () => Array(this.gridSize.cols).fill(0))
     this.setGlider()
     this.drawCells()
     this.drawGrid()
