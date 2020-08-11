@@ -37,10 +37,10 @@ const app = {
   start() {
     this.setDimensions()
     this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.cols).fill(0))
-    this.newGameState = this.gameState
+    this.setGlider()
     this.drawCells()
     this.drawGrid()
-    this.interval = setInterval(() => this.gameLoop, this.fps)
+    // this.interval = setInterval(() => this.gameLoop, this.fps)
   },
 
   setDimensions() {
@@ -54,6 +54,7 @@ const app = {
     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
     for (let row = 0; row < this.gridSize.rows; row++) {
       for (let col = 0; col < this.gridSize.cols; col++) {
+        console.log(`[${row}, ${col}] => ${this.checkAliveness(row, col)}`)
         this.checkAliveness(row, col) == 0
           ? (this.ctx.fillStyle = 'aquamarine')
           : (this.ctx.fillStyle = 'black')
@@ -95,7 +96,7 @@ const app = {
     return (
       this.checkAliveness((row - 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
       this.checkAliveness((row - 1) % this.gridSize.rows, col) +
-      this.checkAliveness(row - (1 % this.gridSize.rows), (col + 1) % this.gridSize.cols) +
+      this.checkAliveness((row - 1) % this.gridSize.rows, (col + 1) % this.gridSize.cols) +
       this.checkAliveness(row, (col - 1) % this.gridSize.cols) +
       this.checkAliveness(row, (col + 1) % this.gridSize.cols) +
       this.checkAliveness((row + 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
@@ -130,5 +131,13 @@ const app = {
     }
     this.gameState = _.cloneDeep(this.newGameState)
     this.drawCells()
+  },
+
+  setGlider() {
+    this.gameState[10][11] = 1
+    this.gameState[11][12] = 1
+    this.gameState[12][10] = 1
+    this.gameState[12][11] = 1
+    this.gameState[12][12] = 1
   },
 }
