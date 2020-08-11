@@ -12,7 +12,7 @@ const app = {
   gridSize: {
     // number of tiles in every axis
     rows: 60,
-    columns: 80,
+    cols: 80,
   },
 
   fps: 1, //sic
@@ -35,14 +35,15 @@ const app = {
 
   start() {
     this.setDimensions()
-    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.columns).fill(0))
+    this.gameState = Array(this.gridSize.rows).fill(Array(this.gridSize.cols).fill(0))
+    this.newGameState = this.gameState
     this.drawCells()
     this.drawGrid()
   },
 
   setDimensions() {
     this.appSize.height = this.tileSize * this.gridSize.rows
-    this.appSize.width = this.tileSize * this.gridSize.columns
+    this.appSize.width = this.tileSize * this.gridSize.cols
     this.canvasDom.height = this.appSize.height
     this.canvasDom.width = this.appSize.width
   },
@@ -50,8 +51,7 @@ const app = {
   drawCells() {
     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
     for (let row = 0; row < this.gridSize.rows; row++) {
-      for (let col = 0; col < this.gridSize.columns; col++) {
-        console.log([row, col])
+      for (let col = 0; col < this.gridSize.cols; col++) {
         this.checkAliveness(row, col) == 0
           ? (this.ctx.fillStyle = 'aquamarine')
           : (this.ctx.fillStyle = 'black')
@@ -89,16 +89,33 @@ const app = {
   },
 
   checkNeighbors(row, col) {
-    /* Checks how many of the neighbor cells are alive */
+    /* Checks how many of the neighbor cells are alive. This function works for toroidal topology */
     return (
-      this.checkAliveness(row - 1, col - 1) +
-      this.checkAliveness(row - 1, col) +
-      this.checkAliveness(row - 1, col + 1) +
-      this.checkAliveness(row, col - 1) +
-      this.checkAliveness(row, col + 1) +
-      this.checkAliveness(row + 1, col - 1) +
-      this.checkAliveness(row + 1, col) +
-      this.checkAliveness(row + 1, col + 1)
+      this.checkAliveness((row - 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
+      this.checkAliveness((row - 1) % this.gridSize.rows, col) +
+      this.checkAliveness(row - (1 % this.gridSize.rows), (col + 1) % this.gridSize.cols) +
+      this.checkAliveness(row, (col - 1) % this.gridSize.cols) +
+      this.checkAliveness(row, (col + 1) % this.gridSize.cols) +
+      this.checkAliveness((row + 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
+      this.checkAliveness((row + 1) % this.gridSize.rows, col) +
+      this.checkAliveness((row + 1) % this.gridSize.rows, (col + 1) % this.gridSize.cols)
     )
+  },
+
+  changeCellState(row, col) {
+    /* Determines if a cell lives or dies according to the Conway's Game of Life rules:
+    1. A live cell with fewer than 2 live neighbors dies (underpopulation)
+    2. A live cell with more than 3 live neighbors dies (overpopulation)
+    3. A live cell with 2 or 3 live neighbors keeps on living
+    4. A dead cell with exactly three neighbors will come to life (reproduction) */
+
+    if (
+      this.gameState[row][col] === 1 &&
+      (this.checkNeighbors(row, col) < 2 || this.checkNeighbors(row, col) > 3)
+    ) {
+      this.newGameState[row][col] = 0
+    } else if (this.gameState[row][col] === 0 && this.checkNeighbors(row, col) === 3) {
+      this.newGameState[row][col] = 1
+    }
   },
 }
