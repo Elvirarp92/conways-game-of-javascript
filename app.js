@@ -16,6 +16,7 @@ const app = {
   },
 
   fps: 1, //sic
+  interval: undefined,
 
   appSize: {
     // size, in pixels, of the canvas
@@ -39,6 +40,7 @@ const app = {
     this.newGameState = this.gameState
     this.drawCells()
     this.drawGrid()
+    this.interval = setInterval(() => this.gameLoop, this.fps)
   },
 
   setDimensions() {
@@ -117,5 +119,16 @@ const app = {
     } else if (this.gameState[row][col] === 0 && this.checkNeighbors(row, col) === 3) {
       this.newGameState[row][col] = 1
     }
+  },
+
+  gameLoop() {
+    this.newGameState = _.cloneDeep(this.gameState)
+    for (let row = 0; row < this.gridSize.rows; row++) {
+      for (let col = 0; col < this.gridSize.cols; col++) {
+        this.changeCellState(row, col)
+      }
+    }
+    this.gameState = _.cloneDeep(this.newGameState)
+    this.drawCells()
   },
 }
