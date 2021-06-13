@@ -15,7 +15,7 @@ const app = {
     cols: 80,
   },
 
-  fps: 1, //sic
+  timeout: 100, //sic
   interval: undefined,
 
   appSize: {
@@ -36,11 +36,13 @@ const app = {
 
   start() {
     this.setDimensions()
-    this.gameState = Array.from({length: this.gridSize.rows}, () => Array(this.gridSize.cols).fill(0))
+    this.gameState = Array.from({ length: this.gridSize.rows }, () =>
+      Array(this.gridSize.cols).fill(0)
+    )
     this.setGlider()
     this.drawCells()
     this.drawGrid()
-    // this.interval = setInterval(() => this.gameLoop, this.fps)
+    this.interval = setInterval(() => this.gameLoop(), this.timeout)
   },
 
   setDimensions() {
@@ -54,7 +56,6 @@ const app = {
     this.ctx.fillRect(0, 0, this.tileSize, this.tileSize)
     for (let row = 0; row < this.gridSize.rows; row++) {
       for (let col = 0; col < this.gridSize.cols; col++) {
-        console.log(`[${row}, ${col}] => ${this.checkAliveness(row, col)}`)
         this.checkAliveness(row, col) == 0
           ? (this.ctx.fillStyle = 'aquamarine')
           : (this.ctx.fillStyle = 'black')
@@ -91,17 +92,38 @@ const app = {
     return this.gameState[row][col]
   },
 
+  checkWrapAround(idx, len) {
+    /* This function checks whether a point is beyond the borders of the canvas. If
+    so, then it returns a value that points to the other side of the canvas, to emulate
+    toroidal topology in 2d. 
+    
+    I am pretty sure there is a cleaner way to do this with modular arithmetics, but I 
+    couldn't get it to work, so i'm taking the inefficient solution */
+    if (idx <= -1) {
+      return len - 1
+    } else if (idx === len) {
+      return 0
+    } else {
+      return idx
+    }
+  },
+
   checkNeighbors(row, col) {
     /* Checks how many of the neighbor cells are alive. This function works for toroidal topology */
+    const left = this.checkWrapAround(col - 1, this.gridSize.cols)
+    const right = this.checkWrapAround(col + 1, this.gridSize.cols)
+    const up = this.checkWrapAround(row - 1, this.gridSize.rows)
+    const down = this.checkWrapAround(row + 1, this.gridSize.rows)
+
     return (
-      this.checkAliveness((row - 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
-      this.checkAliveness((row - 1) % this.gridSize.rows, col) +
-      this.checkAliveness((row - 1) % this.gridSize.rows, (col + 1) % this.gridSize.cols) +
-      this.checkAliveness(row, (col - 1) % this.gridSize.cols) +
-      this.checkAliveness(row, (col + 1) % this.gridSize.cols) +
-      this.checkAliveness((row + 1) % this.gridSize.rows, (col - 1) % this.gridSize.cols) +
-      this.checkAliveness((row + 1) % this.gridSize.rows, col) +
-      this.checkAliveness((row + 1) % this.gridSize.rows, (col + 1) % this.gridSize.cols)
+      this.checkAliveness(up, left) +
+      this.checkAliveness(up, col) +
+      this.checkAliveness(up, right) +
+      this.checkAliveness(row, left) +
+      this.checkAliveness(row, right) +
+      this.checkAliveness(down, left) +
+      this.checkAliveness(down, col) +
+      this.checkAliveness(down, right)
     )
   },
 
@@ -111,7 +133,6 @@ const app = {
     2. A live cell with more than 3 live neighbors dies (overpopulation)
     3. A live cell with 2 or 3 live neighbors keeps on living
     4. A dead cell with exactly three neighbors will come to life (reproduction) */
-
     if (
       this.gameState[row][col] === 1 &&
       (this.checkNeighbors(row, col) < 2 || this.checkNeighbors(row, col) > 3)
@@ -131,13 +152,21 @@ const app = {
     }
     this.gameState = _.cloneDeep(this.newGameState)
     this.drawCells()
+    this.drawGrid()
   },
 
   setGlider() {
-    this.gameState[10][11] = 1
-    this.gameState[11][12] = 1
-    this.gameState[12][10] = 1
-    this.gameState[12][11] = 1
-    this.gameState[12][12] = 1
+    /*     this.gameState[0][1] = 1
+    this.gameState[1][2] = 1
+    this.gameState[2][0] = 1
+    this.gameState[2][1] = 1
+    this.gameState[2][2] = 1 */
+
+    /* CENTER GLIDER */
+    this.gameState[25][26] = 1
+    this.gameState[26][27] = 1
+    this.gameState[27][25] = 1
+    this.gameState[27][26] = 1
+    this.gameState[27][27] = 1
   },
 }
